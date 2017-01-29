@@ -1,0 +1,41 @@
+{
+  "name": "extend-prototype",
+  "version": "1.0.0",
+  "description": "Extends one class with methods from another.",
+  "keywords": [
+    "function",
+    "class",
+    "prototype",
+    "mixin",
+    "trait",
+    "extend",
+    "method",
+    "getter",
+    "setter"
+  ],
+  "author": "John Lamansky",
+  "license": "MIT",
+  "homepage": "https://github.com/lamansky/extend-prototype",
+  "repository": "lamansky/extend-prototype",
+  "main": "index.js",
+  "engines": {
+    "node": ">=7.0.0"
+  },
+  "dependencies": {
+    "get-prototype": "^1.0.0",
+    "is-plain-object": "^2.0.1"
+  },
+  "devDependencies": {
+    "eslint-config-lamansky": "^1.0.0",
+    "mocha": "^3.2.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "eslintConfig": {
+    "extends": "lamansky",
+    "env": {
+      "mocha": true
+    }
+  }
+}
