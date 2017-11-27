@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "get-prototype": "^1.0.0",
+    "has-property": "^1.0.0",
     "is-plain-object": "^2.0.1"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 'use strict'
 
 const getPrototype = require('get-prototype')
+const hasProperty = require('has-property')
 const isPlainObject = require('is-plain-object')
 
 /**
@@ -16,6 +17,7 @@ const isPlainObject = require('is-plain-object')
  *   will be added to the `target` are those whose names are in this array. This
  *   argument may be omitted entirely and replaced with an `options` object.
  * @param {?object} options
+ * @param {?object} [options.bindTo] An object to which to bind the target’s new methods.
  * @param {bool} [options.overwrite=false] Whether or not to overwrite existing methods
  *   in the `target`.
  * @return {function|object} The `target` argument.
@@ -30,18 +32,26 @@ module.exports = function extend (target, sources, methodWhitelist, options) {
   if (isPlainObject(methodWhitelist) && !isPlainObject(options)) {
     options = methodWhitelist
   }
-  const {overwrite = false} = options || {}
+  const {bindTo, overwrite = false} = options || {}
 
   const targetPrototype = getPrototype(target)
   if (!Array.isArray(sources)) sources = [sources]
-  for (const sourcePrototype of sources.map(source => getPrototype(source))) {
+  for (const source of sources) {
+    const sourcePrototype = getPrototype(source)
     for (const [name, desc] of Object.entries(Object.getOwnPropertyDescriptors(sourcePrototype))) {
       if (name === 'constructor') continue
       if (typeof desc.value !== 'function' && typeof desc.get !== 'function' && typeof desc.set !== 'function') continue
       if (Array.isArray(methodWhitelist) && !methodWhitelist.includes(name)) continue
-      if (typeof targetPrototype[name] !== 'undefined') {
+      if (hasProperty(targetPrototype, name)) {
         if (!overwrite) continue
         if (targetPrototype.hasOwnProperty(name) && !Object.getOwnPropertyDescriptor(targetPrototype, name).configurable) continue
+      }
+      if (bindTo) {
+        for (const func of ['value', 'get', 'set']) {
+          if (typeof desc[func] === 'function') {
+            desc[func] = desc[func].bind(bindTo)
+          }
+        }
       }
       Object.defineProperty(targetPrototype, name, desc)
     }

@@ -143,7 +143,7 @@ describe('extend()', function () {
     assert.strictEqual(typeof a.exclude, 'undefined')
   })
 
-  it('should support an overwrite argument when used as a static method', function () {
+  it('should support an `overwrite` argument when used as a static method', function () {
     class A {
       test () {}
     }
@@ -153,5 +153,24 @@ describe('extend()', function () {
     B.extend = extend
     B.extend(A, {overwrite: true})
     assert.strictEqual(A.prototype.test, B.prototype.test)
+  })
+
+  it('should support the `bindTo` argument', function () {
+    const world = Symbol('world')
+    const other = {hello: world}
+
+    class A1 {}
+    class A2 {}
+    class B {
+      get test () { return this.hello }
+    }
+
+    extend(A1, B)
+    const a1 = new A1()
+    assert.notStrictEqual(a1.test, world)
+
+    extend(A2, B, {bindTo: other})
+    const a2 = new A2()
+    assert.strictEqual(a2.test, world)
   })
 })
